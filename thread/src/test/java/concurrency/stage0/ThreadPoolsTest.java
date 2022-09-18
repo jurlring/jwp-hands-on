@@ -59,4 +59,48 @@ class ThreadPoolsTest {
             log.info(message);
         };
     }
+
+    @Test
+    void test() {
+        final var executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 1000; i++) {
+            executor.submit(logWithSleepThread("hello cached thread pools"));
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("time = " + (end - start) / 4000.0);
+    }
+
+    private Runnable logWithSleepThread(final String message) {
+        return () -> {
+            log.info(message);
+        };
+    }
+
+    @Test
+    void test2() throws InterruptedException {
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 1000; i++) {
+            Thread thread = new Thread(new RunnableThread("hello thread"));
+            thread.start();
+            thread.join();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("time = " + (end - start) / 4000.0);
+    }
+
+    private static final class RunnableThread implements Runnable {
+
+        private String message;
+
+        public RunnableThread(final String message) {
+            this.message = message;
+        }
+
+        @Override
+        public void run() {
+            log.info(message);
+        }
+    }
 }
